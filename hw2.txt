@@ -1,0 +1,121 @@
+Jaryd Saevitzon						Discussion 1A
+							Friday 2:00pm	
+  							Anahita 
+
+
+
+
+1) Ex 7 P. 26
+This is another variaton of the stable matching problem.
+We set up a stable matching problem where the input wires
+have a set of preferences and the output wires have a set
+of preferences. We then use this set of preferences in the 
+exact same algorithm as other stable matching problems. The
+proof is also the same is stable matching proofs. 
+Alg:
+
+Algorithm:
+
+Initially all i E I and o E O are free
+	    
+While there is an input wire that is free and has not yet been assigned an output junction::
+      
+      choose i
+
+      Let o be the closest output wire to i:
+
+      if o is still available:
+      	  (i,o) are a match
+
+      else
+      If o prefers i to its current match i':
+         remove i' from o
+	    match i and o
+	    Else
+	       i remains fre
+      	    EndIf
+      EndIf
+EndWhile
+
+
+
+
+2) Ex 5 P. 105
+Show by induction that in any binary tree the number
+of nodes with two children is exactly one less than 
+the number of leaves.
+
+Let n be the number of nodes with 2 children nodes
+
+1. For the case of one node with no children, then we
+have one leaf and no nodes with 2 children. As long as we 
+only add one child leaf (and keep doing so) to the node,
+we maintain one leaf and no nodes with 2 children. Thus the
+claim holds true for the case of n=0 and l=1
+
+2. Assume that the case holds true for n=k, then when
+n=k nodes with 2 children there are k+1 leaves. 
+There are 2 cases we must consider when
+incrementing to n+1:
+   a. Adding a child node with 2 children to a leaf node
+   b. Adding a child node to a node that already
+      has one other child node.
+
+3a. We prove a for n+1 by showing the following:
+    when we have n=k with k+1 leaves, we can add
+    a node to a leaf node, thus we initially have k 
+    leaves but then we add 2 more so we now have k+2
+    leaves. Since we added a new node with 2 children
+    and did not make any other changes, we have n+1
+    nodes with 2 children. So the claim holds true
+    for this case.
+3b. For the case of adding a child node to a node 
+    that already has one other child node, we can
+    show that n=k and l=k+1, adding a child node
+    causes n to become k+1 since the parent node
+    now has 2 children node. Since we added a leaf
+    with no children, we now have l=k+2. Thus 
+    n=l-1. And the claim holds true for this case
+
+4. Thus we have shown that in both cases the claim
+   holds true for n+1 and we have concluded our proof
+   by induction.
+
+
+
+3) Ex 7 P. 108
+Claim: Let G be a gaph on n nodes, where n is
+an even number. If every node of G has degree
+at least n/2, then G is connected.
+
+True.
+
+Proof:
+1. By way of contradiction, lets assume that every
+node in G has degree at least n/2, but that G is
+not connected.
+2. Let us pick an arbitrary node, u, which is connected
+to n/2 other nodes.
+3. We then choose another node, v, for which there
+is no path to u. By the claim, this node must also
+be connected to at least n/2 nodes. But since it may
+not be allowed to connect to u or the other n/2 nodes 
+that u is connected to, it only has at most (n/2)-2 nodes
+to choose from, a contradiction.
+
+
+4)
+Let 1 and 2 cross first, 1 comes back
+Let 7 and 10 go next, 2 comes back
+Let 1 and 2 go last
+
+Total Time: 2+1+10+2+2
+      	    = 17 mins
+
+
+5) An alorithm that would work is to start at the root node,
+   Do a depth first search from that node finding the farthest 
+   node u from the root node. Then start at u and do a depth first
+   search finding the node v at greatest distance from u, this 
+   will be the longest path.
+   

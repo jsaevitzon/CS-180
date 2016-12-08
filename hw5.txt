@@ -1,0 +1,300 @@
+Jaryd Saevitzon                                         Discussion 1A
+                                                        Friday 2:00pm
+                                                        Anahita
+
+
+_____________________________________
+
+
+
+Exercise 3 on Page 246
+
+We have n cards. We are looking for greater than n/2 cards
+to be equivalent. 
+
+Notes:
+Sorting doesnt work...
+Merge doesnt work...
+Cant test every pair...
+Could start at the first card and check 1/2n of the cards
+eliminating as we go...
+
+Need logn, so if we go recursive then we need to
+get rid of at least have at every level. We need also
+to be doing about n work at each level to attain
+nlogn.
+
+If we have n cards and n/2 are equivalent, then if we match
+each pair i and i+1 for i=1 to i=n (even) then at least one
+of those pairs has to have an equivalence. If it did not
+then there would not be > n/2 cards that are equivalent.
+
+
+recursive algo:
+We can use a recursive algorithm that returns a card if 
+there is only one left. If there are 2 cards left then
+if they are equivalent it returns card 1. Otherwise return
+nothing. If there are more then 2 cards, split the cards into half
+and call the algorithm again.
+
+We can split the first half of cards into X and the second
+half into Y. Then recursively call the algorithm above for X
+then for Y.
+If the algorithm returns a card for X or Y, then test that card
+against all the cards in the larger set. If it is equivalent to
+at least n/2 cards then there is a set of greater than n/2 cards
+that is equivalent.
+
+The algorithm will make logn recursive calls. Each recursive
+call will be doing n/2^j work where j is the depth of the recursive
+call. Thus the total work done at each level is n. Since
+there are logn levels the total amount of work done is nlogn in
+the algorithm. The final step takes O(n) to compare the final card
+to every other card so we get a total running time of O(nlogn).
+
+This must work because when we split up the halfs at least one half
+will have a majority of equivalent cards. Then when we start eliminating
+cards we will return 1 card from at either X or Y or both if there is some
+possible equivalence. If no card returns from either then there is no 
+possible equivalence.
+
+
+___________________________________________________
+
+
+Exercise 9 on page 320
+
+a)
+
+     1     2    3    4    5
+______________________________
+x|   10    5    10   5    10
+s|   8     4     3   2     1
+
+optimal: {1,3.5} reboot: {2,4}
+
+b)
+
+given x1...xn and s1...sn
+
+We dont need to reboot on the last day, n. So on the nth day
+we have either rebooted on the n-1th day or we did not reboot.
+Denote opt as opt(i,s) where i is the day and s is the number
+of days we have not rebooted, starting at 0.
+Then we have
+  if no reboot:
+     opt(n,s) = min(s,Xn) + opt(n-1, s-1)
+  if we reboot:
+     opt(n,s_0) = min(s_0, Xn) + opt(n-2, s)
+
+putting this together, lets denote:
+s_0 = 0th day
+sr  = s random, its irrelevant what this s was
+s   = the current day being used for i
+
+The recurrence relation will be:
+max( opt(i-2,sr) + min(s_0, Xi), opt(i-1, s-1) + min(s,Xn))
+
+We use the above  recurrence to determine if we should reboot,
+if we choose the first part, we get:
+   opt(i,s_0) = min(s_0, Xi)
+else we get:
+   opt(i,s)   = min(s, Xi) 
+
+
+Thus, we iteratively use the recurrence to determine whether
+we should reboot or not,. Then we add the corresponding amount
+that we can process on Xi for each i=1 to i=n to an array to 
+help determine the reccurence.
+
+This runs in O(n) time because we have to process n items in the
+array and each item takes O(1) time to determine the maximum.
+Finding the total amount processed is also O(1). Putting it
+all together the total time is O(n).
+
+Proof: This clearly holds for n=1 as the algorithm will use
+min(s_0,x1) and that is the optimal solution. If we assume
+that it holds for all n<=i-1 then for i we either decide
+to reboot at i-1 or not reboot. According to the recurrence,
+the algorithm will choose to not reboot if min(s,Xi) + 
+opt(n-1,s-1) is greater than the recurrence of rebooting. Thus
+the algorithm will choose whatever maximizes the number and the
+maximum number processed will be at i whether we reboot or not. 
+___________________________________________________
+Exercise 10 on page 321
+
+
+a) An example where this does not work is...
+
+     1    2    3    4    5   
+A   10   10   20   25   20
+B   20   20   10   10   50
+
+
+The solution from the algorithm given would be 
+{B, B, move, move, B}. This cant be correct because
+there are 2 moves in a row which is never optimal. The
+correct answer would have been {B, B, B, B, B}. Look at the
+end of part B. I think this algorithm could work with some
+slight changes. 
+
+
+b)
+We can break this down by knowing that for the final tie
+we must be at either A or B, w will not move. So if we 
+finished at A or B then we would use:
+   A is chosen:
+      if we were already at A:
+      	 opt(i,A) = a_i + opt(i-1,A)
+      if we were at B:
+      	 opt(i,A) = a_i + opt(i-2,B)
+if we finished at B:
+      if we were already at B:
+      	 opt(i,B) = b_i + opt(i-1,B)
+      if we were at A:
+      	 opt(i,B) = b_i + opt(i-2,A)
+
+Putting these together we get:
+opt(i,A) = a_i + max(opt(i-1,A), opt(i-2,B))
+opt(i,B) = b_i + max(opt(i-1,B), opt(i-2,A))
+
+Thus at every step we must fill both opt(i,A) and opt(i,B)
+with the appropriate values from above.
+
+We iterate through every value to do this, at each iteration it 
+takes O(1) time so one sweep takes 2n time = O(n).
+
+This clearly works for n=1, as we choose the maximum starting
+point. Assume this holds for n=i-1. Then for i we must choose
+whether we move at i-1 to the opposite location at i or 
+stay at the location at i-1. The algorithm will choose whatever
+maximizes the point at i, choosing opt(i,A) and opt(i,B) to maximize
+the final values. Thus, opt(i,A) or opt(i,B) will hold the greatest
+value and we can choose the greatest value by picking the greater
+between the two.
+
+
+Note: from part A
+I think this may be able to be solved using a 1d array. If we
+use the recurrence
+if at A:
+  opt(i) = A if a_i + a_i+1 > b_i+1
+  opt(i) = move if b_i+1 > a_i + a_i+1
+if at B:
+  opt(i) = B if b_i + b_i+1 > a_i+1
+  opt(i) = move if a_i+1 > b_i + b_i+1
+
+We can do this iteratively and fill the arrays with A,B and move. The 
+problem occurs when we have 2 or more moves in a row, which we could
+then change all the moves to whatever the value before the first move was.
+We could then trace back through the algorithm adding all the values
+from A and B, such that if opt(i)=A_i we add A_i to our total values
+for all i. For the first value, we can start at A, and if our algorithm 
+gives a move, then we just change to B.
+
+This algorithm should take O(n) since we make 2 passes through
+the array, one to set the path one to find the values. All these actions
+take O(1) so the final time is O(n).
+ ___________________________________________________
+
+Exercise 19 on page 329
+
+
+
+The last bit is either part of s either belongs to some part of
+x or y.
+Let the last element be the ith bit, then if it belongs to x:
+opt(i,x,y) = i + opt(i-1, x-1, y)
+if y were chosen:
+opt(i,x,y) = i + opt(i-1, x, y-1)
+
+Where y-1 is just one position less in the string y, same with x.
+We increase by one position in x or y if x or y is chosen. 
+
+Need some way to put this together...
+
+opt(i, x, y) = i + max(opt(i-1, x, y-1), opt(i-1, x-1, y))
+
+But really there is no max and i doesnt help us so...
+
+A better way to do this would be to make this into a 2d array, 
+like opt(x,y). And use something more like...
+
+opt(x, y) = opt(x, y-1) or opt(x-1, y). 
+
+
+Choosing which one to use is the trick. All the info we really
+need is whether it works or not at opt(x,y). Doesnt matter which
+it came from. So we can fill 2D array with 1's and 0's for every
+ spot that some the strings' is made up of x and y at the point 
+i,j. Then we can fill opt(i,j) with a 1. Otherwise a 0. 
+
+Checking if the string fits is another task. Letting the string
+be S, and using i and j, we can check if S[i+j] for each opt(i,j)
+fits into the pattern of x and y. Thus S[i+j] is made up of x and
+y at i and j if:
+(allowing w to be the length of x and z the length of y)
+S[i+j] = x[i mod w] or y[i mod z]
+note: the mods allow for string repetition
+
+Putting this all together, we fill opt(i,j) with a 1 
+if and only if:
+    opt(x-1, y) = 1 and S[i+j] = x[i mod w]
+OR  opt(x, y-1) = 1 and S[i+j] = y[i mod z]
+
+Otherwise we write opt(i,j) = 0
+
+We can do this for all i=1 to i=n and j=1 to n. Filling the rows
+one by one. This will give us all the info we need at each point.
+S is interleaving of x and y if there is a 1 at any of the final 
+points where i or j is n. 
+
+Thus, the running time of this algorithm is O(n^2) since there
+are n^2 spots to fill. Each spot takes O(1) time which consists
+of checking the array at most twice, and checking S at most twice.
+Checking if there is an optimal solution can be done during or at 
+the end of the algorithm. If we do it at the end then it takes O(n)
+time. Thus the overall run time is O(n^2).
+
+___________________________________________________
+	 
+
+Given a set X of n numbers x1, x2, ... xn, find the length of the
+longest non-decreasing subset. For example, give 7 6 2 4 1 9 the
+answer is 2 4 9  (3 numbers)
+Solution:
+
+For some i in the set X, it is part of some S, where S is any 
+nondecreasing subset, and S' is the longest nondecreasing subset.
+
+Lets create an array opt of size n. Then,
+opt[i] = 1 + opt(j) ST j<i and X[j] <= X[i]
+
+We can iteratively do this for every i=1 to i=n. Finding the longest
+subsequence for X[i] for every i.
+The longest subsequence would then be the greatest number in opt.
+The subsequence could be found by first finding the greatest number, G,
+in opt. Then starting at that number, add it to S',going back 
+through the array,find G-1, add that to the array. Do that all the 
+way through the array, finding G-1, G-2... This is the longest 
+subsequence.
+
+Finding the values for opt takes O(n^2) time since we need to make
+n^2 comparisons in total and each comparison takes O(1) time. Finding
+the greatest value takes O(n) time. And finding the subsequence
+takes an additional O(n) time. Thus the overall run time is O(n^2).
+
+Proof:
+
+For n=1 Then we have opt[i] = 1 which is obviously the longest
+subsequence.
+
+Assume this holds for i = n-1. Then Prove it holds for i...
+
+We have opt[i] = 1 + opt[j]. Assuming that it holds for i=n-1,
+then if X[i] < X[j] where opt[j] is the last element in the
+greatest subsequencem then opt[i] will not be greater than the
+greatest and the answer will be the same as for n-1.
+Otherwise, if X[i] >= X[j] where opt[j] is the greatest number
+then we add 1 to X[i] and we have the greatest subsequence ending
+at X[i]. This concludes the proof by induction.

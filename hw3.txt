@@ -1,0 +1,260 @@
+Jaryd Saevitzon                                         Discussion 1A
+                                                        Friday 2:00pm
+                                                        Anahita
+
+
+Exercise 4 on page 107
+
+n butterflies
+m choices
+we cant assume that it is completely connected
+or even connected
+O(m+n)
+
+Implementation:
+We can use a few data structures:
+   An array of size n to hold which type of class it belongs to
+      Each bucket will be 0 if we have not reached it in our algo yet
+      	   	  will be 1 if it is part of class A
+		  will be 2 if it is part of class B
+   An array of size n to denote whether each node has been explored
+   A doubly linked list to implement BFS
+
+Algo:
+  
+  Initialize array A, of size n, to be 0 for each slot
+  Initialize an empty doubly linked list, L
+  For each connected component:
+      Choose any node, n, in the connected component to begin at
+          we change A[u] to 1.
+ 
+      Place n in the beginnign of L
+
+      While L is not empty:
+	
+	Let u be the first node in L
+	mark u explored
+	Remove u from L
+	
+        For each edge from u, ST e=(u,v):
+      	  
+	    if v is not marked explored:
+	       add v to end of L
+	  
+	    if A[v] is marked 0 (not classified yet):
+	       if e="same":
+	       	  we mark A[v] ST A[v] = A[u]
+	       else e="different":
+	     	  we mark A[v] ST A[v] is opposite to A[u] (1 or 2)
+	  	
+ 	    else A[v] is marked 1 or 2:
+	       if e=="same":
+		  if A[v] does not equal A[u]: 
+		     return "NOT COMPATIBLE"
+	       else  e==="different":
+		  if A[v] equals A[u]:
+		      return "NOT COMPATIBLE"
+
+  Return "COMPATIBLE"
+
+Analysis:
+
+The inner for loop runs in constant time per iteration
+and will run at most 2m time times, twice for each edge.
+The initialization of the array takes O(n) time. Thus,
+our algorithm has an overall running time of O(m+n).
+
+
+
+________________________________________________
+
+Exercise 11 on page 110)
+
+C1, C2, ..., Cn computers
+(Ci, Cj, t_k) ordered triples
+m total triples
+ordered by nondecreasing t_k
+
+Problem: Given a collection of trace data, the algorithm
+should decide whether a virus introduced at computer Ca at 
+time x could have infected computer Cb by time y. In O(m+n)
+
+Implementation:
+An array of integers to hold the time at which a computer 
+   was infected (Size n) (O(n)). Originally set to -1. If
+   positive than the computer was infected at that time.
+
+A 2D array of pointers (size mx2)) to linked lists (O(n)) of the
+   triplets, and a time t_k that corresponds to all comm at that time.
+   lists consist of all computer communications that took place at
+   that time. Since the times and communications were in sorted 
+   order, so are the buckets. Thus we can move from one time
+   t_k to the next in O(1). This will be our graph.
+
+ALGORITHMS:
+
+Our graph construction would look like: 
+  Construct an array of integers of size m, each set to -1, call
+     this array a_times
+  
+
+  Construct the 2D array. Setting the first column to the time t_k
+     and the second column to a pointer to a linked list.
+  For each time t_k:
+      Set the first column in the array to a[i] = t_k
+      Set the second column to a pointer of a linked list
+      
+      For all computer exchanges (c_i, c_j) that occur at that time
+      	 add c_i and c_j to the end of the linked list
+
+This would take O(m+n)
+
+Determine_if_infected(G, C_a,t_i, C_b, t_f):
+ 
+  Assign the value of t_i to a_times[C_a]
+
+  Iterate through the 2D array, finding a time greater than or
+    equal to t_i. This will be our starting point. 
+    
+  
+  Iterating through the array while the time in A[i] is <= t_f:
+    Let i be the index of A
+    Let t be the time at A[i]
+    
+    For each computer, c_k, in the linked list at A[i]:
+    	If a_times[c_k] is positive for any c_k in the linked 
+	   list at A[i]:
+             Start at the beginning of the linked list and for every
+	        computer in the list, set a_times[c_k]=t
+	     End for loop
+     EndFor
+   EndWhile
+   
+   If a_times[C_b] is positive and is less than or equal to t_f:
+      Return True
+   Else
+      Return False
+
+This algorithm works since we take O(m+n) to construct the graph. Then
+to find our starting point and to iterate through all times is O(m).
+We iterate through each list at most twice, performing one array check
+for each value in the list per iteration, this takes O(4n)=O(n). Thus,
+we have a total running time of O(m+n).
+
+________________________________________________ 
+
+Exercise 7 on page 191)
+
+Given:
+n distinct jobs
+Each job i needs p_i seconds on supercomp
+     	   	 f_i seconds on PC
+There are at least n PC's
+
+Implementation:
+
+We should sort the n distinct jobs in order of
+decreasing f_i. Thus, the first job to start on the
+supercomputer will be that with the largest f_i and the
+last will be that with the smallest. The sorting should 
+take O(nlogn) and assigning each job to the computer should
+only take O(n). Thus, the overall running time is O(nlogn).
+
+Proof:
+We know this works by an exchange argument. Suppose we had an ordering
+O that had 2 jobs, j_i and j_k (w/ f_i and f_k) such that j_i was 
+scheduled after j_k but f_i<f_k. Thus we have an inversion. We want 
+to turn O into our optimal schedule O'. We can do this by switching
+the ordering of j_i and j_k, then we can show the ordering takes
+no longer. Since j_i now starts at an earlier time, with same f_i, j_i 
+clearly finishes earlier than it previously did. Even though j_k now 
+starts later, its time on the supercomputer finishes at the same time
+that j_i had previously finished on the supercomputer. And since f_k<f_i,
+it must finish on the PC no later than j_i had previously finished on the pc.
+Thus we have turned O into our optimal schedule O'.
+________________________________________________
+
+Exercise 11 on Page 193)
+
+For any graph G and any minimium spanning tree T of G, there is a valid
+execution of Kruskal's algorithm that produces T as output. Multiple spanning
+trees arise when there exists one or more cycles where multiple edges on 
+the cycle share the most expensive value. Thus, allowing Kruskal's to delete
+any edge of its choice. We can fix this by creating some small weight
+eps = .0001 and adding 1*eps to the first repeated value in the cycle, 
+2*eps to the second repeated cycle, and so on. Thus effectively elimating all
+redundencies while negligibly changing the overall cost. Kruskal's will then
+eliminate the most expensive edges in order. Thus, we can create any Tree T
+by changing the order in which we add the i*eps to each edge.
+
+Proof:
+Say we have a graph G, and Kruskal originally gave us a tree T, but we want T'. 
+Then there must have been a cycle on G at which we could have chosen to eliminate
+a different edge, e', then the one we eliminated to get T,e. Thus, for all redundencies
+in the edges of the cycle c, we can add i*eps to each, with the smallest perturbation
+belonging to e. Thus, we do not eliminate e, but instead eliminate some other edge e',
+by the cycle property, to form T'. By doing this we have changed the cost of the 
+final tree by an insignificant amount, allowing us to claim that T' is optimal as well.
+
+
+
+
+________________________________________________
+5. A Hamiltonian path in a graph is a path that has no repeated 
+vertices and covers all vertices. Design an efficient algorithm 
+ for finding a Hamiltonian path in a DAG.
+
+Implementation:
+  We can assume the graph is connected.
+  #A doubly linked list, D, to implement DFS
+  We dont need a doubly linked list since we can implement DFS recursively
+  A doubly linked list, L, to store the path
+  An array, A, to keep track of nodes that have been explored
+  Graph G
+  We can use a count to determine when we have a path equal to 
+     all nodes
+  
+Algo:
+
+  Let count = 0
+  Let L be empty
+  Let G be the graph
+  Let u be any source node
+  call Path_Finder(G, D, L, count, u)
+  
+  Path_Finder(G, D, L, count, u):
+
+  	
+  	Add u to the end of L
+	mark u explored in A
+
+	Increment count by one
+	
+	if count == number of nodes:
+	   Return L
+
+	For each edge from u, ST e=(u,v):
+	    if v has not been explored:
+  	       call Path_Finder(G, D, L, count, v)
+
+	Return "No Path Found"
+
+  	
+____________________________________________________
+ 6.  Let G = (V,E) be a connected undirected graph and let v be a
+ vertex in G. Let T by the depth-first search tree of G starting 
+ from v, and let U be the breadth-first search tree of G starting 
+ from v. Prove that the depth of T is at least as great as the depth of U.
+  
+Proof:
+ By way of contradiction, assume that we have a breadth first search tree, U',
+ that has a depth greater than the depth-first search tree T' of G. Suppose, there
+ is some node, v, preceeded by a node, u. Then the depth first search tree must have
+ stopped at u, while the breadth first tree did not stop until at v or after. Suppose 
+ that DFS traveled from some node w to u and that u was not marked explored when the 
+ algori thm reached it. Then, v must have been marked explored at some point before 
+ the invocation of DFS(u), But this would contradict the alorithm of depth first 
+ search, as the search must have either just come from v, or v must not have been marked 
+ explored as u would have also already been marked explored. Thus, this contradicts that
+ U' has greater depth than T'.
+ 

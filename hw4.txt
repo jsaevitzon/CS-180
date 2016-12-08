@@ -1,0 +1,245 @@
+Jaryd Saevitzon                                         Discussion 1A
+                                                        Friday 2:00pm
+                                                        Anahita
+
+
+
+_____________________________________
+
+Exercise 1 on Page 246 
+
+Solve the problem of finding the median btwn two sets 
+  of size n each..
+
+
+Call the first set X and the second set Y. 
+Let there be indexes for the sets called i and j for X and Y.
+
+ 1)Set i and j to 0
+ 2)If n=1, then return (X[i]+Y[j])/2
+ 3)Let k = (1/2)n and take X(k) and Y(k). These must be the medians
+       of X and Y
+ 4)If X(k) < Y(k) increment i to k+1 and let n = (1/2)n. Thus,
+      We are effectively getting rid of the lesser half of X
+      and the upper half of Y. If X(k) > Y(k) we do the exact opposite
+      of this, incrementing j instead of i. 
+ 5) Go back to step 2.
+
+This algorithm fits the condition of using at most O(logn) queries.
+Since at each step we are effectively eliminating half of each database,
+we can only perform this step logn times before reaching 1 element left 
+and hitting the base case.
+
+This algorithm will always hit the base case at some point because
+we are looking at a smaller portion of the database with each query.
+For n=1 the algorithm clearly gives back the median of the two databases,
+X[0] + Y[0] /2. For any query performed, the returned values of X[k] and 
+Y[k] are the medians of the databases. By shifting our indexes and focusing
+on less of the databases with each query, we keep only the values that are
+in between X[k] and Y[k]. Thus, the median remains the same between
+X and Y in each recursive call until we hit the base case and return the 
+median.
+_____________________________________
+
+Exercise 4 on Page 247 
+
+Compute all forces in O(nlogn) time...
+
+
+
+Let A = (q_1, q_2, ..., q_n)
+    B = (-(n)^-2, ... -1/9, -1/4, -1,  0 , 1 , 1/4..., (n)^-2)
+
+
+This is because for all i<j and i>j for (j-i)^2 we have a 
+vector, when j = 1, that looks like
+	(-(1)^-2, -1/4, -1/9 ... (-n+1)^-2)
+and for when j = n we have a vector that looks like
+    	((n-1)^-2, (n-2)^-1, ... 1/4, 1)
+
+
+Thus by taking a convolution we can find the vector c
+that makes up the coefficients for q_i/(j-i)^2. We can compute the
+convolution with these two components since we can factor out q_j of
+every sum. Thus we can just multiply the components in c by the 
+factored out C*q_j and we can obtain the Force for each F_j.k
+
+Since the convolution can be computed in O(nlogn) and we only
+spend an additional O(n) time multiplying C*q_i by c, the
+running time is O(nlogn).
+
+
+
+
+
+_____________________________________
+
+Exercise 4 on Page 315
+
+a) Show that it does not solve the problem....
+
+An instance on which the algorithm does not return
+the correct solution is 
+
+Assume the cost of switching cities is M=10
+Given n=5 and the following operating costs for each month    
+
+
+Months:   1     2     3    4    5 
+_________________________________
+NY :      1     2     2    2    1
+SF :      2     1     1    1    2
+
+Then the algorithm gives us: 
+ {NY, SF, SF, SF, NY} which is 1+10+1+1+1+10+1 = 25
+However, the lowest cost should include no switching and be:
+ {SF, SF, SF, SF, SF} which is 2+1+1+1+2 = 7 which is clearly
+ lower than 25
+
+Thus this algorithm clearly does not return the correct answer.
+
+
+b) Give an example in which every optimal plan moves 3 times...
+
+An example in which every optimal plan must move at least 3
+times is:
+
+Given n=5 and M=10
+
+Months:	  1	2     3	   4	5
+____________________________________
+NY :	  1     50    1    50	1
+SF :      50    1     50   1	50
+
+In this example, every optimal plan must switch every month. 
+Thus the total number of switches in this example would be 4
+for any optimal plan.
+The optimal plan here would be {NY, SF, NY, SF, NY} which is
+1+10+1+10+1+10+1+10+1 = 45. 
+
+Any other plan that did not move 4 times would be at least 50, 
+which is already greater than our optimal plan.
+
+c) Give an efficient algorithm that returns optimal cost...
+
+We know that the plan either ends on N or S. This holds for 
+every subproblem of the sequence. Thus, we can determine
+each step by choosing the optimal move for each city. 
+
+Algo:
+
+Let opt_N(n) = N_n  + min( M + opt_S(n-1), opt_N(n-1))
+Let opt_S(n) = S_n  + min( M + opt_N(n-1), opt_S(n-1))
+
+Set opt_N(0)=0 and opt_S(0)=0
+
+Then for each month, i,  calculate opt_N(i) and opt_S(i) using
+the above equations. 
+Return the lesser of opt_N(n) and opt_S(n).
+
+Proof:
+This clearly holds for the first month. Either the plan for opt_N
+and opt_S will stay in their own cities if the cost is less than 
+M+(cost of opposite city). Otherwise if the cost of their city is
+greater than M+(cost of opposite city) then they will move. Clearly
+this is optimal for the first month.
+
+If we assume it holds for all months n<i, then when opt_N(i) and
+opt_S(i) are being calculated, one of them will contain the optimal
+overall plan. This is true because if opt_N(i-1) was the optimal plan,
+then for the i^th month the plan will either stay in N if the operating
+cost is less than the cotst of M+S_i. If the cost is greater than
+M+S_i then the optimal plan would be to switch to S for the i^th month.
+And thus the optimal plan would be contained in opt_S(i). The opposite
+is also true if we switch the months.
+
+_____________________________________
+
+Exercise 8 on Page 319 
+
+a) Show that the algorithm does not solve the problem...
+
+Using the given example but changing from x_1=1 to x_1=2 we have,
+
+i     1    2     3    4
+___________________________
+x_i   2    10    10   1
+f_i   1    2     4    8
+
+Then the algorithm would choose to use the EMP on only i=4.
+Thus we wouuld only have destroyed one robot. 
+But we know that the optimal solution is using it at 3 and 4 so
+this algorithm clearly does not work.
+
+b) Find algorithm that returns maximum number of robots destroyed:
+
+   The recharging function can be written as 
+       2^(j-i-1)  Where j is the current second and i is the last second
+       it was used at
+
+   Then we are looking to solve each subproblem such that opt(j) is
+   the maximum number of robots destroyed at that time.
+
+   Thus we are looking to maximize:
+   	max( opt(i) + min( 2^(j-i-1), x_i) for all i<j)
+
+   The algorithm then is:
+     
+	Set opt(0) to 0
+	Iterate through all the seconds, looking to maximize the
+	  quantity above for opt(j) at each step
+	Return opt(n)
+
+   The runtime is then O(n^2) since we iterate through each second in the
+   outerloop which takes O(n). Then the innerloop takes i<j iterations. At 
+   worst this is also O(n). Thus we get O(n^2). 
+
+
+
+
+
+
+_____________________________________
+
+Problem 5
+
+Consider a set of n (infinite) lines in the plane. What is the maximum number ofregions produced.
+
+
+I plotted lines against spaces and found the following: 
+note: n stands for spaces, l for lines.
+
+when l=1, n=2
+     l=2, n=4
+     l=3, n=7
+     l=4, n=11
+     ...
+
+Thus we can see that there is a recurrence relation:
+     n_i = n_(i-1) + i where i is the number of lines
+
+For i=1 this clearly holds since
+    n_0 = 1
+    Thus, n_1 = n_0 + i =  1 + 1 = 2
+    And when there is one line there are 2 regions so this
+    holds for the base case
+
+By induction we assume that this holds for all n<=i. Then
+we can prove that it holds for i+1.
+
+By unrolling the earlier equation we can get:
+    n_i = (i(i+1))/2 +1 
+
+Again, this clearly holds for the base case since
+    n_i = (1(1+1))/2 +1 = 2 as discussed earlier
+
+Here we prove it holds for i+1:
+    n_(i+1) = n_i + i + 1
+    	    = (i(i+1))/2 + 1 + i + 1   since n_i = (i(i+1))/2 +1
+	    = (i(i+1))/2 + (2+2*i)/2 + 1
+	    = (i^2 + i + 2*i + 2) /2 + 1
+	    = (i^2 + 3*i + 2)/2 + 1
+	    = ((i+1)(i+2))/2 +1
+	    Thus, this proves the induction step and shows that
+	    it holds for all i
+     

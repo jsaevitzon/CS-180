@@ -1,0 +1,282 @@
+Jaryd Saevitzon                                         Discussion 1A
+                                                        Friday 2:00pm
+                                                        Anahita
+
+
+_____________________________________
+Exercise 6 on Page 416
+
+
+This is just some variation of bipartite matching
+
+Algo:
+
+Set up a source node that has directed edges pointing
+to each light switch. Each capacity c_e = 1.
+
+Create directed edges from every light switch to every
+light. Each capacity c_e = 1.
+
+Create a terminal node and create directed edges from
+every light to the terminal node.
+
+(this is clearly bipartite).
+
+For each edge, e_i:
+    If e_i intersects any of the m line segments, 
+    delete e_i
+
+Once we have deleted all edges that cross through segments,
+run Ford-Fulkerson algo until completion
+
+Once Ford is completed, if the flow is equal to the number
+of switches and lights (n) then there is an ergonomic design,
+otherwise there is not.
+
+RunTime:
+Drawing the graph = O(n^2) 
+Deleting all the edges = O(n^2*m)
+(we could have combined the above two steps into one but the
+runtime would have still been O(n^2*m)
+Ford-Fulkerson = O(m*n)
+
+Thus the runtime = O(m*(n^2))
+ 
+Proof:
+
+The correctness of this algorithm follows from the fact that 
+a perfect pairing must pair one light to one light switch for 
+every light and switch. By setting this problem up as a bipartite
+matching, we know that a perfect pairing exists if the max flow is
+equal to the max flow capacity coming out of the source node. Thus,
+it follows that there is a perfect matching if the max flow is equal 
+to the number of switches which is equal to the number of lights.
+
+_____________________________________
+Exercise 14 on page 421
+
+Create a source node and construct directed edges from the
+source node to every node in the subset X. All edges
+should have capacyity C_e=1.
+
+Create a terminal node and construct directed edges from
+every node in the subset S to the terminal node.All edges
+should have capacyity C_e=1.
+
+Set every directed edge in the graph to have capacity C_e = 1.
+
+Run Ford-Fulkerson until completion.
+
+If the f_in(t) = f_out(s) (max flow is equal to the number of
+edges coming out of s) then a set of evacuation routes exists.
+
+RunTime:
+Constructing the graph:	O(V+E)
+Ford-Fulkerson:	 O(V^3)
+
+Total =		 O(V^3)
+
+Proof:
+By establishing a source node and setting the flow into each node of
+X to be 1, we know that the only way that all of X "escapes" is that if
+all the flow that comes into X flows out of S to t. Furthermore, it must
+be that there every edge from the source to every node in X must carry a
+flow of 1. This establishes that the max flow must then be equal to 
+the number of nodes in X which is equal to the number of edges coming out
+of s. Thus by the Ford-Fulkerson algorithm we will obtain this result if 
+such a set of paths exist.
+
+b)
+
+We can start the algorithm for this part as the same above. We
+create a source node and create a directed edge from the source
+to every node in the subset X. All edges should have capacity c_e=1.
+
+Create a terminal node and construct directed edges from every
+node in the subset S to the terminal node. All edges should have
+capacity C_e = 1.
+
+Here, Create a copy of every node that is not in X or S, call the 
+original node C and the copy C'. Move all outgoing edges from C
+to C'. Then create a directed edge from C to C' with capacity 1.
+Thus C will keep all of the incoming edges, there will be a single 
+edge from C to C' and C' will keep the outgoing edges.
+
+We then run Ford-Fulkerson until completion.
+
+If the f_in(t) = f_out(s) (max flow is equal to the number of
+edges coming out of s) then a set of evacuation routes exists.
+
+Runtime:
+Constructing the graph: O(V+E)
+Ford-Fulkerson: O(V^3)
+Total = O(V^3)
+
+Proof:
+By creating a copy of each node and setting the original to have one edge
+towards the copy, and the copy to maintain all the original outgoing edges,
+we can eliminate any node from being used by more than one incoming edge.
+This holds since the edge from the original to the copy has a capacity of 1,
+working backwards, this mean that any node can have a maximum incoming flow of
+1, which corresponds to at most one edge. We keep all remaning outgoing edges
+so the paths all remain the same, ultimately. Also, by the proof from part A 
+we know that there is a set of paths when f_in(t) = f_out(s).
+One more note, there mnust be a set of k=f_in(t) paths in total for there to
+be an optimal solution. Otherwise, if there were not k paths, then some node
+would have to be used more than once, which contradicts the rules given.
+_____________________________________
+
+Exercise 17 on page 423
+
+
+Since each edge has capacity 1 and the max flow is k,
+then there must be at least k paths from s to t in G.
+Also, since k edges were deleted, then each path must have
+a missing edge.
+
+For each path Pi in the k paths, run binary search to find the
+edge that is missing. We search the middle node of Pi, then if
+it is reachable check the 3/4 node, otherwise check the 1/4 node.
+Then we can find the edge missing in log(n) time. We can do this 
+for each path to find all missing edges in k*log(n) time. 
+
+We can run BFS from the source to all the points before each missing
+edge O(m+n). The remaining set of nodes is the nodes that are not reachable
+from S.
+
+Overall Time: O(k*log(n))
+
+Proof:
+Since it is given to us that k edges were deleted, one from each path,
+we must then find k nodes at which they are the first unreachable node
+along each path. Furthermore, since there are k paths, we can look at 
+each path individually to find such a node along that path. This can 
+be done by binary search which will allow us to find such a node 
+along each such path in log(n) time. Since we have to do this k times,
+the total time it takes for this part is k*log(n). Once we know the endpoints
+we can use breadthfirst search to find the connected component of S since we
+can just ensure we do not search any nodes connected between the missing edges.
+By looking at the remaining nodes we have the connected component of t, since
+there is no path from s to t these connected components should be disjoint.
+_____________________________________
+
+
+Exercise 19A on page 425
+
+Given Lists: L1...Lk
+Find Lists: L'_1...L'_k
+
+Need p_i doctors on day i (n days)
+
+Algo:
+Set up a bipartite matching so that:
+    The left side consists of nodes of doctors
+    so that each node Uj corresponds to doctor Kj.
+    The nodes Uj for all j create the subset U.
+
+    The right side consists of nodes of days,
+    so that each node Vi corresponds to day i.
+    The nodes Vi for all i create the subset V.
+
+    An edge connects Uj to Vi if a doctor Kj
+    said he can work on day i. Directed edge has C_e=1.
+
+Set up a source and terminal node so that:
+    The source node should have outgoing edges connecting
+    the source to each node in U. The capacity of each edge
+    shoul be equal to the number of days that each doctor j
+    put on his list. So doctor j with list Lj should have an
+    incoming edge from the source of capacity |Lj|
+
+    The terminal node should have 1 incoming edge from each node
+    in V. The capacity of each edge should be the number of doctors
+    required to work on each day. So if on day i, pi doctors are 
+    required to work, then the capacity of the edge from Vi to
+    terminal node should be equal to |pi|.
+
+We then run Ford-Fulkerson to find the maximum flow. 
+
+If the max-flow is equal to the sum of all the incoming edges to T, then
+there is a set of lists L'1...L'k such that Pi doctors work on day i. 
+Furthermore, we can return the lists L' by starting at each node Uj in U
+and seeing which edges carry a flow of 1 in the final graph G. If the edge
+has a flow of 1, then the corresponding Vi exists in doctor Uj's final list
+L'j.
+
+Runtime: O(n^2*k^2)
+
+Proof:
+This is similar to a bipartite matching for Ford-Fulkerson. However, the incoming
+flow of t is at most the sum of Pi for all i. Since the sum of Pi is only achieved
+if each of the capacities from V to terminal node is full, we must have each edge
+from V to the terminal node have a max capacity. By Ford-Fulkerson we can find the
+max-flow. And if the max-flow is equal to the incoming capacity of T, then there is
+an optimal sorting of lists.
+
+_____________________________________
+
+
+#5
+
+Must be in order of decreasing W and D
+Can use multiple versions of same box. 
+Can rotate boxes.
+
+Obviously going to have to sort the boxes in decreasing order.
+
+Since we can use boxes more than once, we could in theory use a single
+box at most three times. So instead of n boxes to use we have 3n boxes
+to use.
+
+If we take the n boxes and compute the rotations of each box and save all 
+rotations, then we have 3n boxes for use.
+
+We should sort the boxes in order of decreasing area. (nlogn)
+
+We then need an array of size 3n for DP.
+
+[[
+  For the last box, box n:
+      if Wn<Wn-1 and Dn < Dn-1 then we will add it to the optimal solution
+      else we will not.
+   For the ith box:
+      if we add it then 
+      	 opt(i) = max(h_i + opt(j)) where 1<=j<i and Wi < Wj , Di < Dj
+      else
+	 opt(i) = h_i
+]]
+
+So we use the recurrence:
+   opt(i) = max(max(h_i + opt(j)), h_i) following the rules above
+to determine the array at each step.
+
+
+We then traverse the array to find the maximum height. 
+
+Time:
+sorting: O(nlogn)
+Recurrence: n computations. each computation takes at most n time. = O(n^2).
+Finding max: O(n)
+
+Total: O(n^2)
+
+
+Proof:
+When there is one box the algorithm clearly holds as the optimal solution
+is h_i.
+Assume it holds for all n<i items, and that the maximum exists at opt(k)
+Then for i, we use the recurrence to determine the optimal height
+     opt(i) = max(max(h_i + opt(j)), h_i)
+
+If the first part of the solution is chosen, then we get
+   opt(i) = h_i + opt(j) for some j
+else we get
+   opt(i) = h_i
+
+If h_i + opt(j) > opt(k). The new maximum height is at opt(i).
+If h_i > opt(k) The new maximum height is at opt(i).
+Else the maximum height is still opt(k). 
+
+Thus, the algorithm finds the optimal solution for i. Which concludes
+the proof. 
+     
